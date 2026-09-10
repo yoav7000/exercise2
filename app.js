@@ -227,12 +227,50 @@ function checkSolution() {
     if (!completedLevels.includes(lvl.id)) {
       completedLevels.push(lvl.id);
     }
+
+    if (completedLevels.length === LEVELS.length) {
+      showCompletionModal();
+    }
   } else {
     dom.gameBoard.classList.remove('shake');
     void dom.gameBoard.offsetWidth;
     dom.gameBoard.classList.add('shake');
     showFeedback('error', 'המיקום עדיין אינו מדויק. בדקו שוב את הוראות השלב.');
   }
+}
+
+function resetCurrentLevel() {
+  const lvl = LEVELS[currentLevelIndex];
+  setControls(lvl.defaults, lvl.activeProps);
+  applyPlayerStyles();
+  clearFeedback();
+  if (!completedLevels.includes(lvl.id)) {
+    dom.btnNext.disabled = true;
+  }
+}
+
+function nextLevel() {
+  if (currentLevelIndex < LEVELS.length - 1) {
+    currentLevelIndex++;
+    loadLevel(currentLevelIndex);
+  }
+}
+
+function showCompletionModal() {
+  let totalAttempts = 0;
+  for (const id in attemptsPerLevel) {
+    totalAttempts += attemptsPerLevel[id];
+  }
+  dom.modalSummary.textContent = `סה"כ ניסיונות בכל השלבים: ${totalAttempts}`;
+  dom.completionModal.classList.remove('hidden');
+}
+
+function restartGame() {
+  dom.completionModal.classList.add('hidden');
+  completedLevels = [];
+  attemptsPerLevel = {};
+  currentLevelIndex = 0;
+  loadLevel(0);
 }
 
 function loadLevel(index) {
@@ -259,6 +297,9 @@ function initEvents() {
   });
 
   dom.btnCheck.addEventListener('click', checkSolution);
+  dom.btnReset.addEventListener('click', resetCurrentLevel);
+  dom.btnNext.addEventListener('click', nextLevel);
+  dom.btnRestartGame.addEventListener('click', restartGame);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
