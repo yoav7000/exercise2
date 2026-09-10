@@ -261,5 +261,167 @@ body {
   flex: 1;
   display: flex;
   justify-content: center;
+  align-items: flex-start;
+  min-width: 320px;
+}
+
+.board-frame {
+  padding: 1rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.game-board {
+  position: relative;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle at center, #111a2e 0%, #080c14 100%);
+  border: 2px solid #2a3b5c;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6);
+}
+
+.game-board::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(42, 59, 92, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(42, 59, 92, 0.15) 1px, transparent 1px);
+  background-size: 35px 35px;
+  pointer-events: none;
+}
+
+.board-layer {
+  position: absolute;
+  inset: 12px;
+  display: flex;
+}
+
+.targets-layer {
+  z-index: 1;
+  pointer-events: none;
+}
+
+.ships-layer {
+  z-index: 2;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ship-item,
+.target-pad {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  user-select: none;
+  position: relative;
+}
+
+.game-board.wrap-mode .ship-item,
+.game-board.wrap-mode .target-pad {
+  width: 60px;
+  height: 60px;
+}
+
+.ship-item {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ship-item .ship-symbol {
+  font-size: 2rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.game-board.wrap-mode .ship-item .ship-symbol {
+  font-size: 1.6rem;
+}
+
+.ship-tag,
+.target-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  margin-top: 2px;
+}
+
+.target-pad {
+  border: 2px dashed rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.04);
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+.target-pad .target-icon {
+  font-size: 1.7rem;
+  opacity: 0.65;
+}
+
+.game-board.wrap-mode .target-pad .target-icon {
+  font-size: 1.3rem;
+}
+
+.color-1 { color: #00d2ff; }
+.color-2 { color: #f59e0b; }
+.color-3 { color: #ec4899; }
+.color-4 { color: #10b981; }
+.color-5 { color: #8b5cf6; }
+.color-6 { color: #06b6d4; }
+
+.target-pad.color-1 { border-color: rgba(0, 210, 255, 0.6); background: rgba(0, 210, 255, 0.08); }
+.target-pad.color-2 { border-color: rgba(245, 158, 11, 0.6); background: rgba(245, 158, 11, 0.08); }
+.target-pad.color-3 { border-color: rgba(236, 72, 153, 0.6); background: rgba(236, 72, 153, 0.08); }
+.target-pad.color-4 { border-color: rgba(16, 185, 129, 0.6); background: rgba(16, 185, 129, 0.08); }
+.target-pad.color-5 { border-color: rgba(139, 92, 246, 0.6); background: rgba(139, 92, 246, 0.08); }
+.target-pad.color-6 { border-color: rgba(6, 182, 212, 0.6); background: rgba(6, 182, 212, 0.08); }
+
+.ship-item.color-1 { background: linear-gradient(135deg, #0284c7, #0369a1); border: 2px solid #38bdf8; }
+.ship-item.color-2 { background: linear-gradient(135deg, #d97706, #b45309); border: 2px solid #fbbf24; }
+.ship-item.color-3 { background: linear-gradient(135deg, #db2777, #be185d); border: 2px solid #f472b6; }
+.ship-item.color-4 { background: linear-gradient(135deg, #059669, #047857); border: 2px solid #34d399; }
+.ship-item.color-5 { background: linear-gradient(135deg, #7c3aed, #6d28d9); border: 2px solid #a78bfa; }
+.ship-item.color-6 { background: linear-gradient(135deg, #0891b2, #0e7490); border: 2px solid #22d3ee; }
+
+@media (max-width: 960px) {
+  .game-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+  .control-panel {
+    width: 100%;
+    max-width: 520px;
+  }
+}
+
+@media (max-width: 480px) {
+  .board-frame {
+    padding: 0.5rem;
+  }
+  .game-board {
+    width: 320px;
+    height: 320px;
+  }
+  .ship-item,
+  .target-pad {
+    width: 54px;
+    height: 54px;
+  }
+  .game-board.wrap-mode .ship-item,
+  .game-board.wrap-mode .target-pad {
+    width: 46px;
+    height: 46px;
+  }
+  .ship-item .ship-symbol {
+    font-size: 1.4rem;
+  }
+  .target-pad .target-icon {
+    font-size: 1.2rem;
+  }
 }
