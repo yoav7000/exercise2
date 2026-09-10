@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cosmic Flex | משחק ללימוד Flexbox</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="header-content">
+        <h1>Cosmic Flex 🚀</h1>
+        <p class="subtitle">הנחו את צי החלליות לתחנת העגינה באמצעות פקודות Flexbox</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-badge" id="level-indicator">שלב 1 מתוך 8</div>
+        <div class="stat-badge" id="attempt-indicator">ניסיונות: 0</div>
+      </div>
+    </header>
+
+    <nav class="level-nav" aria-label="בחירת שלב">
+      <div class="level-nav-list" id="level-selector"></div>
+    </nav>
+
+    <main class="game-layout">
+      <section class="control-panel">
+        <article class="instruction-box">
+          <h2 id="stage-title">משימת עגינה</h2>
+          <p id="stage-instruction">הוראות השלב יופיעו כאן.</p>
+        </article>
+
+        <section class="editor-box">
+          <div class="editor-header">
+            <span class="editor-tag">CSS</span>
+            <span class="editor-target">#docking-bay</span>
+          </div>
+          <div class="code-editor">
+            <div class="code-line">
+              <span class="css-selector">#docking-bay</span> {
+            </div>
+            <div class="code-line indent">
+              <span class="css-prop">display</span>: <span class="css-val">flex</span>;
+            </div>
+
+            <div class="code-line indent" id="row-direction">
+              <label for="prop-direction" class="css-prop">flex-direction</label>: 
+              <select id="prop-direction" class="css-select" dir="ltr">
+                <option value="row">row</option>
+                <option value="row-reverse">row-reverse</option>
+                <option value="column">column</option>
+                <option value="column-reverse">column-reverse</option>
+              </select>;
+            </div>
+
+            <div class="code-line indent" id="row-justify">
+              <label for="prop-justify" class="css-prop">justify-content</label>: 
+              <select id="prop-justify" class="css-select" dir="ltr">
+                <option value="flex-start">flex-start</option>
+                <option value="flex-end">flex-end</option>
+                <option value="center">center</option>
+                <option value="space-between">space-between</option>
+                <option value="space-around">space-around</option>
+                <option value="space-evenly">space-evenly</option>
+              </select>;
+            </div>
+
+            <div class="code-line indent" id="row-align">
+              <label for="prop-align" class="css-prop">align-items</label>: 
+              <select id="prop-align" class="css-select" dir="ltr">
+                <option value="flex-start">flex-start</option>
+                <option value="flex-end">flex-end</option>
+                <option value="center">center</option>
+                <option value="baseline">baseline</option>
+                <option value="stretch">stretch</option>
+              </select>;
+            </div>
+
+            <div class="code-line indent" id="row-wrap">
+              <label for="prop-wrap" class="css-prop">flex-wrap</label>: 
+              <select id="prop-wrap" class="css-select" dir="ltr">
+                <option value="nowrap">nowrap</option>
+                <option value="wrap">wrap</option>
+                <option value="wrap-reverse">wrap-reverse</option>
+              </select>;
+            </div>
+
+            <div class="code-line">}</div>
+          </div>
+
+          <div class="editor-actions">
+            <button id="btn-check" class="btn btn-primary">בדוק פתרון</button>
+            <button id="btn-reset" class="btn btn-secondary">איפוס</button>
+            <button id="btn-next" class="btn btn-success" disabled>שלב הבא ⬅</button>
+          </div>
+
+          <div id="feedback-alert" class="feedback-alert" role="status" aria-live="polite"></div>
+        </section>
+      </section>
+
+      <section class="board-container">
+        <div class="board-frame">
+          <div id="game-board" class="game-board">
+            <div id="targets-layer" class="board-layer targets-layer"></div>
+            <div id="ships-layer" class="board-layer ships-layer"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="completion-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <h2>🎉 כל הכבוד! השלמתם את כל השלבים!</h2>
+      <p>שלטתם בכל יסודות ה-Flexbox: כיוון, יישור, ריווח וגלישת שורות.</p>
+      <div class="modal-stats" id="modal-summary"></div>
+      <button id="btn-restart-game" class="btn btn-primary">שחקו שוב מהתחלה</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
