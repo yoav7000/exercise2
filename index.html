@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cosmic Flex | משחק ללימוד Flexbox</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
   <div class="app-container">
@@ -32,10 +32,12 @@
 
         <section class="editor-box">
           <div class="editor-header">
+          <div class="editor-header" dir="ltr">
             <span class="editor-tag">CSS</span>
             <span class="editor-target">#docking-bay</span>
           </div>
           <div class="code-editor">
+          <div class="code-editor" dir="ltr">
             <div class="code-line">
               <span class="css-selector">#docking-bay</span> {
             </div>
@@ -109,7 +111,7 @@
     </main>
   </div>
 
-  <div id="completion-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+  <div id="completion-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" style="display: none;">
     <div class="modal-card">
       <h2>🎉 כל הכבוד! השלמתם את כל השלבים!</h2>
       <p>שלטתם בכל יסודות ה-Flexbox: כיוון, יישור, ריווח וגלישת שורות.</p>
@@ -118,6 +120,6 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=2"></script>
 </body>
 </html>

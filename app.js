@@ -103,9 +103,43 @@ const dom = {
   btnRestartGame: document.getElementById('btn-restart-game')
 };
 
+const STORAGE_KEYS = {
+  completed: 'cosmic_flex_completed',
+  current: 'cosmic_flex_current',
+  attempts: 'cosmic_flex_attempts'
+};
+
 let currentLevelIndex = 0;
 let attemptsPerLevel = {};
 let completedLevels = [];
+
+function loadStorage() {
+  try {
+    const savedCompleted = localStorage.getItem(STORAGE_KEYS.completed);
+    const savedCurrent = localStorage.getItem(STORAGE_KEYS.current);
+    const savedAttempts = localStorage.getItem(STORAGE_KEYS.attempts);
+
+    if (savedCompleted) completedLevels = JSON.parse(savedCompleted);
+    if (savedAttempts) attemptsPerLevel = JSON.parse(savedAttempts);
+    if (savedCurrent) {
+      const idx = parseInt(savedCurrent, 10);
+      if (idx >= 0 && idx < LEVELS.length) {
+        currentLevelIndex = idx;
+      }
+    }
+  } catch (e) {
+    completedLevels = [];
+    attemptsPerLevel = {};
+  }
+}
+
+function saveStorage() {
+  try {
+    localStorage.setItem(STORAGE_KEYS.completed, JSON.stringify(completedLevels));
+    localStorage.setItem(STORAGE_KEYS.current, currentLevelIndex.toString());
+    localStorage.setItem(STORAGE_KEYS.attempts, JSON.stringify(attemptsPerLevel));
+  } catch (e) {}
+}
 
 function getPlayerValues() {
   return {
@@ -163,6 +197,43 @@ function renderBoardItems(count, isWrapMode) {
   }
 }
 
+function renderLevelNav() {
+  dom.levelSelector.innerHTML = '';
+  LEVELS.forEach((lvl, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'level-btn';
+    btn.textContent = lvl.id;
+    btn.setAttribute('aria-label', `עבור לשלב ${lvl.id}`);
+
+    const isCompleted = completedLevels.includes(lvl.id);
+    const isCurrent = idx === currentLevelIndex;
+    const isUnlocked = idx === 0 || completedLevels.includes(LEVELS[idx - 1].id) || isCompleted;
+
+    if (isCurrent) btn.classList.add('active');
+    if (isCompleted) btn.classList.add('completed');
+    if (!isUnlocked) {
+      btn.classList.add('locked');
+      btn.disabled = true;
+    }
+
+    btn.addEventListener('click', () => {
+      if (isUnlocked) {
+        currentLevelIndex = idx;
+        loadLevel(currentLevelIndex);
+      }
+    });
+
+    dom.levelSelector.appendChild(btn);
+  });
+}
+
+function updateStats() {
+  const currentLvl = LEVELS[currentLevelIndex];
+  dom.levelIndicator.textContent = `שלב ${currentLvl.id} מתוך ${LEVELS.length}`;
+  const attempts = attemptsPerLevel[currentLvl.id] || 0;
+  dom.attemptIndicator.textContent = `ניסיונות: ${attempts}`;
+}
+
 function clearFeedback() {
   dom.feedbackAlert.className = 'feedback-alert';
   dom.feedbackAlert.textContent = '';
@@ -173,6 +244,27 @@ function clearFeedback() {
 function showFeedback(type, text) {
   dom.feedbackAlert.className = `feedback-alert visible ${type}`;
   dom.feedbackAlert.textContent = text;
+}
+
+function loadLevel(index) {
+  dom.completionModal.style.display = 'none';
+  dom.completionModal.classList.add('hidden');
+  const lvl = LEVELS[index];
+  dom.stageTitle.textContent = lvl.title;
+  dom.stageInstruction.textContent = lvl.instruction;
+
+  renderBoardItems(lvl.itemsCount, lvl.isWrap);
+  applyTargetStyles(lvl.target);
+  setControls(lvl.defaults, lvl.activeProps);
+  applyPlayerStyles();
+  clearFeedback();
+
+  const isAlreadyDone = completedLevels.includes(lvl.id);
+  dom.btnNext.disabled = !isAlreadyDone;
+
+  updateStats();
+  renderLevelNav();
+  saveStorage();
 }
 
 function checkPositionsMatch() {
@@ -204,6 +296,7 @@ function checkPositionsMatch() {
 function checkSolution() {
   const lvl = LEVELS[currentLevelIndex];
   attemptsPerLevel[lvl.id] = (attemptsPerLevel[lvl.id] || 0) + 1;
+  updateStats();
 
   const playerVals = getPlayerValues();
   let propsMatch = true;
@@ -228,7 +321,10 @@ function checkSolution() {
       completedLevels.push(lvl.id);
     }
 
-    if (completedLevels.length === LEVELS.length) {
+    renderLevelNav();
+    saveStorage();
+
+    if (lvl.id === LEVELS.length && completedLevels.length === LEVELS.length) {
       showCompletionModal();
     }
   } else {
@@ -262,29 +358,18 @@ function showCompletionModal() {
     totalAttempts += attemptsPerLevel[id];
   }
   dom.modalSummary.textContent = `סה"כ ניסיונות בכל השלבים: ${totalAttempts}`;
+  dom.completionModal.style.display = 'flex';
   dom.completionModal.classList.remove('hidden');
 }
 
 function restartGame() {
+  dom.completionModal.style.display = 'none';
   dom.completionModal.classList.add('hidden');
   completedLevels = [];
   attemptsPerLevel = {};
   currentLevelIndex = 0;
+  saveStorage();
   loadLevel(0);
-}
-
-function loadLevel(index) {
-  const lvl = LEVELS[index];
-  dom.stageTitle.textContent = lvl.title;
-  dom.stageInstruction.textContent = lvl.instruction;
-
-  renderBoardItems(lvl.itemsCount, lvl.isWrap);
-  applyTargetStyles(lvl.target);
-  setControls(lvl.defaults, lvl.activeProps);
-  applyPlayerStyles();
-  clearFeedback();
-
-  dom.btnNext.disabled = !completedLevels.includes(lvl.id);
 }
 
 function initEvents() {
@@ -303,6 +388,7 @@ function initEvents() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  loadStorage();
   initEvents();
-  loadLevel(0);
+  loadLevel(currentLevelIndex);
 });
